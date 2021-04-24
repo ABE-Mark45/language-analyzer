@@ -1,0 +1,205 @@
+options {
+    JAVA_TEMPLATE_TYPE = "modern";
+    LOOKAHEAD = 1;
+    CHOICE_AMBIGUITY_CHECK = 2;
+    OTHER_AMBIGUITY_CHECK = 1;
+    STATIC = false;
+    DEBUG_PARSER = false;
+    DEBUG_LOOKAHEAD = false;
+    DEBUG_TOKEN_MANAGER = false;
+    ERROR_REPORTING = true;
+    JAVA_UNICODE_ESCAPE = false;
+    UNICODE_INPUT = false;
+    IGNORE_CASE = false;
+    USER_TOKEN_MANAGER = false;
+    USER_CHAR_STREAM = false;
+    BUILD_PARSER = true;
+    BUILD_TOKEN_MANAGER = true;
+    SANITY_CHECK = true;
+    FORCE_LA_CHECK = false;
+}
+
+PARSER_BEGIN(Parser)
+package com.parser;
+public class Parser {
+    public static Context variables = new Context();
+    public static void main(String[] args) throws Exception {
+      Parser parser=new Parser(new StreamProvider(System.in));
+      hello.Parse().execute(variables);
+    }
+
+}
+
+PARSER_END(Parser)
+
+
+
+SKIP: { " " |"\t" | "\n" |"\r" }
+TOKEN : { <TRUE: "tt"> }
+TOKEN : { <FALSE: "ff"> }
+
+TOKEN: { <#LETTER: ["a"-"f"] >}
+TOKEN: { <VAR: (<LETTER>)+ > }
+TOKEN: { <#DIGIT: ["0"-"9"]>}
+TOKEN: { <NUM: (<DIGIT>)+ >  }
+TOKEN : { <PLUS: "+"> }
+TOKEN : { <MINUS: "-"> }
+TOKEN : { <NOT: "!"> }
+TOKEN : { <AND: "^"> }
+TOKEN : { <IF: "if"> }
+TOKEN : { <LEFTP: "("> }
+TOKEN : { <RIGHTP: ")"> }
+TOKEN : { <THEN: "then"> }
+TOKEN : { <ELSE: "else"> }
+TOKEN : { <WHILE: "while"> }
+TOKEN : { <DO: "do"> }
+TOKEN : { <SKIPCOMMAND: "skip"> }
+TOKEN : { <ISEQUAL: "=="> }
+TOKEN : { <EQUALS: ":="> }
+TOKEN : { <SEMICOLON: ";"> }
+
+CodeBlock Parse():
+{
+    CodeBlock block;
+}
+{
+  block = Block()
+  <EOF>
+  {return block;}
+}
+
+
+
+CodeBlock Block():
+{
+    CodeBlock block = new CodeBlock();
+    Statement c;
+}
+{
+    c = Command()
+    {block.add(c);}
+    (
+    <SEMICOLON>
+    c = Command()
+    {block.add(c);}
+    )*
+    {return block;}
+}
+
+
+Statement Command():
+{
+    Token variableToken;
+    ArithmeticExpression arithmeticExpression;
+    BooleanExpression booleanExpression;
+    CodeBlock branchA, branchB, action, block;
+    Statement ret;
+}
+{
+    (
+    <SKIPCOMMAND>
+    {ret = new SkipStatement();}
+    |
+
+    variableToken = <VAR>
+    <EQUALS>
+    arithmeticExpression = AExp()
+    {
+        ret = new AssignmentStatement(variableToken.image, arithmeticExpression);
+        //variables.put(variableToken.image, AExpVal);
+    }
+
+    |
+
+    <IF>
+    booleanExpression = BExp()
+    <THEN>
+    branchA = Block()
+    <ELSE>
+    branchB = Block()
+    {ret = new IfElseStatement(booleanExpression, branchA, branchB);}
+    |
+
+    <WHILE>
+    booleanExpression = BExp()
+    <DO>
+    action = Block()
+    {ret = new DoWhileStatement(booleanExpression, action);}
+    )
+    {return ret;}
+}
+
+
+
+
+ArithmeticExpression AExp():
+{
+    Token t;
+    ArithmeticExpression op1, op2;
+    ArithmeticExpression ret;
+}
+{
+    (
+    t = <NUM>
+    {ret = new NumberExpression(Integer.parseInt(t.image));}
+
+    |
+
+    t = <VAR>
+    {ret = new VariableExpression(t.image);}
+
+    |
+
+    <LEFTP>
+
+        op1 = AExp()
+        ( t = <PLUS> | t = <MINUS> )
+        op2 = AExp()
+    <RIGHTP>
+     {ret = new BinaryArithmeticExpression(op1, t.image, op2);}
+    )
+    {return ret;}
+
+}
+
+BooleanExpression BExp():
+{
+    ArithmeticExpression op1, op2;
+    BooleanExpression boolOp1, boolOp2, ret;
+}
+{
+    (
+    <TRUE>
+    {ret = new ConstantBoolean(true);}
+
+    |
+    <FALSE>
+    {ret = new ConstantBoolean(true);}
+
+    |
+    <NOT>
+    boolOp1 = BExp()
+    {ret = new NotExpression(boolOp1);}
+
+      |
+    <LEFTP>
+        (
+        op1 = AExp()
+        <ISEQUAL>
+        op2 = AExp()
+        {ret = new IsEqualExpression(op1, op2);}
+
+        |
+
+        boolOp1 = BExp()
+        <AND>
+        boolOp2 = BExp()
+        {ret = new ANDExpression(boolOp1, boolOp2);}
+        )
+
+    <RIGHTP>
+
+    )
+    {return ret;}
+
+}
