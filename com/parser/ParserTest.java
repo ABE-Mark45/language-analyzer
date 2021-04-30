@@ -1,11 +1,13 @@
-import java.io.IOException;
-import java.io.StringReader;
+package com.parser;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParserTest {
 
-    @org.junit.jupiter.api.Test
+
+    @Test
     void parse() {
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("z:=0");
@@ -141,25 +143,25 @@ class ParserTest {
         assertDoesNotThrow(()->{
             Parser p = new Parser(
                     "c:=0;" +
-                    "c:=(c+1);" +
-                    "a:=0; b:=10;" +
-                    "if(a==0) then" +
-                        "b:=(b+1);" +
-                        "d:=0;" +
-                        "d:=1;" +
-                        "if(d == 5)" +
+                            "c:=(c+1);" +
+                            "a:=0; b:=10;" +
+                            "if(a==0) then" +
+                            "b:=(b+1);" +
+                            "d:=0;" +
+                            "d:=1;" +
+                            "if(d == 5)" +
                             "then" +
                             "d:=4"+
-                        "else" +
+                            "else" +
                             "d:=10;" +
                             "aa:=1234;" +
                             "if tt then" +
-                                "aa:=3" +
+                            "aa:=3" +
                             "else" +
-                                "aa:=2" +
-                    "else" +
-                        "b:=(b-1)" +
-                    ""
+                            "aa:=2" +
+                            "else" +
+                            "b:=(b-1)" +
+                            ""
             );
             p.Parse().execute(Parser.variables);
             assertEquals(Parser.variables.variables.get("b"), 11);
@@ -198,6 +200,7 @@ class ParserTest {
         assertDoesNotThrow(() -> {
             Parser p = new Parser("  a:= 1;" +
                     "b := (6+(5 + (1+1)))");
+            p.Parse().execute(Parser.variables);
             assertEquals(Parser.variables.variables.get("b"), 13);
         });
 
