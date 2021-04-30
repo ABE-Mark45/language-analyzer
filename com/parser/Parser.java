@@ -5,7 +5,7 @@ public class Parser implements ParserConstants {
     public Context variables = new Context();
     public static void main(String[] args) throws Exception {
       Parser parser=new Parser(new StreamProvider(System.in));
-      parser.Parse().execute(parser.variables);
+      parser.Parse().execute(parser.variables); 
     }
 
   final public CodeBlock Parse() throws ParseException {CodeBlock block;
