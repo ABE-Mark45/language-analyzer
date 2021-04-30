@@ -25,7 +25,7 @@ public class Parser {
     public static Context variables = new Context();
     public static void main(String[] args) throws Exception {
       Parser parser=new Parser(new StreamProvider(System.in));
-      hello.Parse().execute(variables);
+      parser.Parse().execute(variables);
     }
 
 }
@@ -79,6 +79,7 @@ CodeBlock Block():
     c = Command()
     {block.add(c);}
     (
+    LOOKAHEAD(2)
     <SEMICOLON>
     c = Command()
     {block.add(c);}
@@ -149,9 +150,7 @@ ArithmeticExpression AExp():
     {ret = new VariableExpression(t.image);}
 
     |
-
     <LEFTP>
-
         op1 = AExp()
         ( t = <PLUS> | t = <MINUS> )
         op2 = AExp()
@@ -168,6 +167,7 @@ BooleanExpression BExp():
     BooleanExpression boolOp1, boolOp2, ret;
 }
 {
+    {System.out.println("Parsing boolean expression");}
     (
     <TRUE>
     {ret = new ConstantBoolean(true);}
@@ -184,17 +184,18 @@ BooleanExpression BExp():
       |
     <LEFTP>
         (
-        op1 = AExp()
-        <ISEQUAL>
-        op2 = AExp()
-        {ret = new IsEqualExpression(op1, op2);}
-
-        |
-
+        LOOKAHEAD(<AND>)
         boolOp1 = BExp()
         <AND>
         boolOp2 = BExp()
         {ret = new ANDExpression(boolOp1, boolOp2);}
+
+        |
+
+        op1 = AExp()
+        <ISEQUAL>
+        op2 = AExp()
+        {ret = new IsEqualExpression(op1, op2);}
         )
 
     <RIGHTP>
