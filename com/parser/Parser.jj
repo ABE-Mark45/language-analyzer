@@ -184,18 +184,17 @@ BooleanExpression BExp():
       |
     <LEFTP>
         (
-        LOOKAHEAD(<AND>)
-        boolOp1 = BExp()
-        <AND>
-        boolOp2 = BExp()
-        {ret = new ANDExpression(boolOp1, boolOp2);}
-
-        |
-
+        LOOKAHEAD(AExp() <ISEQUAL> )
         op1 = AExp()
         <ISEQUAL>
         op2 = AExp()
         {ret = new IsEqualExpression(op1, op2);}
+        |
+
+        boolOp1 = BExp()
+        <AND>
+        boolOp2 = BExp()
+        {ret = new ANDExpression(boolOp1, boolOp2);}
         )
 
     <RIGHTP>
