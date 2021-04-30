@@ -174,7 +174,7 @@ BooleanExpression BExp():
 
     |
     <FALSE>
-    {ret = new ConstantBoolean(true);}
+    {ret = new ConstantBoolean(false);}
 
     |
     <NOT>
