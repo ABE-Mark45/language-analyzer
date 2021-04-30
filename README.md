@@ -2,6 +2,10 @@
 
 A language lexical analyzer, parser, and interpreter.
 
+# Students
+Ahmed Bahgat Elsherif - 18010078
+Moaz Fathy El-Defrawy - 18011823
+
 # Code Organization
 The main files of the analyzer is the `Parser.jj` and the `Interpreter.java` files. `Parser.jj` defines the context free grammar as defined in the Lab document. `Interpreter.java` defines different classes to hold semantics of the program execution.
 
