@@ -137,7 +137,7 @@ class ParserTest {
         });
     }
     @org.junit.jupiter.api.Test
-    void test2() {
+    void ifElseTest() {
         assertDoesNotThrow(()->{
             Parser p = new Parser(
                     "c:=0;" +
@@ -167,6 +167,47 @@ class ParserTest {
             assertEquals(Parser.variables.variables.get("d"), 10);
             assertEquals(Parser.variables.variables.get("aa"), 3);
         });
+
+
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser("a:=0;\n" +
+                    "if ( ((a == 0) ^ (a == 0)) ^ (a == 0) ) " +
+                    "then b := 5 else b := 6");
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 5);
+        });
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser("a:=0;\n" +
+                    "        if ( ( (a == 0) ^ (a == 0) ) ^ ( (a == 0) ^ (a == 0) ) ) " +
+                    "then b := 5 else b := 6");
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 5);
+        });
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser("a:=0;\n" +
+                    "        if ((a == 0) ^ ((a == 0) ^ (a == 0))) then b := 5 else b := 6\n");
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 5);
+        });
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser(" a:= 1;\n" +
+                    "        b := ((6-a)+(5 + a))");
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 11);
+        });
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser("  a:= 1;" +
+                    "b := (6+(5 + (1+1)))");
+            assertEquals(Parser.variables.variables.get("b"), 13);
+        });
+
+
+
+
+
+
+
+
     }
 
 
