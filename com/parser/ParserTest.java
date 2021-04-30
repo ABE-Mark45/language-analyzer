@@ -1,86 +1,91 @@
 package com.parser;
-import java.io.IOException;
-import java.io.StringReader;
-import com.parser.Parser;
+
+import org.junit.jupiter.api.Test;
+
+import javax.swing.plaf.synth.SynthTextAreaUI;
+import java.io.File;
+import java.io.FileInputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParserTest {
 
-    @org.junit.jupiter.api.Test
+
+    @Test
     void parse() {
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("z:=0");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
 
         });
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("x:=0");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
 
         });
 
         // semi colon at the end
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a:=0;b:=0;");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a=1");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a:=-1");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a:=");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("2");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("2;2");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("خ");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a:=0; b:=0 ; a:=b; a:=c; a:=d");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a:=0; b:=0 ; a:=b; a:=c; a:=d");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("a:=0; ;;;; a:=d");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
 
         assertThrows(Exception.class, () -> {
             Parser p = new Parser("if(a==0) then skip; else skip" +
                     "");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
     }
     @org.junit.jupiter.api.Test
@@ -88,17 +93,17 @@ class ParserTest {
 
         assertDoesNotThrow(() -> {
             Parser p = new Parser("skip");
-            p.Parse().execute(p.variables);
+            p.Parse().execute(Parser.variables);
         });
         assertDoesNotThrow(()->{
             Parser p = new Parser("a:=10; b:=5; ccccc:=(a+b)");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("ccccc"), 15);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("ccccc"), 15);
         });
         assertDoesNotThrow(()->{
             Parser p = new Parser("a:=0");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("a"), 0);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("a"), 0);
         });
 
         assertDoesNotThrow(()->{
@@ -114,8 +119,8 @@ class ParserTest {
         assertDoesNotThrow(()->{
             Parser p = new Parser("a:=0;  skip ; skip" +
                     " ; skip ; a:=0 ; b:=0 ; a:=b; c:=1");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("c"), 1);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("c"), 1);
         });
 
         assertDoesNotThrow(()->{
@@ -128,8 +133,8 @@ class ParserTest {
                     "c:=2" +
                     "" +
                     "");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("c"), 2);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("c"), 2);
         });
 
         assertDoesNotThrow(() -> {
@@ -162,11 +167,11 @@ class ParserTest {
                             "b:=(b-1)" +
                             ""
             );
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("b"), 11);
-            assertEquals(p.variables.variables.get("c"), 1);
-            assertEquals(p.variables.variables.get("d"), 10);
-            assertEquals(p.variables.variables.get("aa"), 3);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 11);
+            assertEquals(Parser.variables.variables.get("c"), 1);
+            assertEquals(Parser.variables.variables.get("d"), 10);
+            assertEquals(Parser.variables.variables.get("aa"), 3);
         });
 
 
@@ -174,63 +179,69 @@ class ParserTest {
             Parser p = new Parser("a:=0;\n" +
                     "if ( ((a == 0) ^ (a == 0)) ^ (a == 0) ) " +
                     "then b := 5 else b := 6");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("b"), 5);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 5);
         });
         assertDoesNotThrow(() -> {
             Parser p = new Parser("a:=0;\n" +
                     "        if ( ( (a == 0) ^ (a == 0) ) ^ ( (a == 0) ^ (a == 0) ) ) " +
                     "then b := 5 else b := 6");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("b"), 5);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 5);
         });
         assertDoesNotThrow(() -> {
             Parser p = new Parser("a:=0;\n" +
                     "        if ((a == 0) ^ ((a == 0) ^ (a == 0))) then b := 5 else b := 6\n");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("b"), 5);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 5);
         });
         assertDoesNotThrow(() -> {
             Parser p = new Parser(" a:= 1;\n" +
                     "        b := ((6-a)+(5 + a))");
-            p.Parse().execute(p.variables);
-            assertEquals(p.variables.variables.get("b"), 11);
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 11);
         });
         assertDoesNotThrow(() -> {
-            Parser p = new Parser("  a:= 1;" +
-                    "b := (6+(5 + (1+1)))");
-            p.Parse().execute(p.variables);
-            assertEquals(13, p.variables.variables.get("b"));
+            Parser p = new Parser("  a:= 1; b:=2;" +
+                    "b := ((6-a)+( ( (b+1) +5) + (1+b) ))");
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 16);
         });
 
-
-
-
-
-
-
-
     }
 
 
     @org.junit.jupiter.api.Test
-    void tes(){
-        try {
-            Parser p = new Parser("a:=0");
-            p.Parse().execute(p.variables);
-        } catch(Exception e){
-            System.out.println(e);
-        }
+    void AddFromToN(){
+        File file = new File(new File("").getAbsoluteFile() +
+                File.separator + "com" + File.separator + "parser" +
+                File.separator + "examples" + File.separator + "example1.txt");
+
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser( new StreamProvider( new FileInputStream(file)) );
+            p.Parse().execute(Parser.variables);
+            assertEquals(Parser.variables.variables.get("b"), 55);
+        });
     }
 
 
     @org.junit.jupiter.api.Test
-    void test3() {
-        try {
-            Parser p = new Parser("a:=0");
-            p.Parse().execute(p.variables);
-        } catch(Exception e){
-            System.out.println(e);
-        }
+    void Fibonacci() {
+        File file = new File(new File("").getAbsoluteFile() +
+                File.separator + "com" + File.separator + "parser" +
+                File.separator + "examples" + File.separator + "example2.TN");
+
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser( new StreamProvider( new FileInputStream(file)) );
+            p.Parse().execute(Parser.variables);
+            System.out.println(Parser.variables.variables.get("a"));
+
+            System.out.println(Parser.variables.variables.get("b"));
+            System.out.println(Parser.variables.variables.get("c"));
+            assertEquals(Parser.variables.variables.get("a"), 55);
+            assertEquals(Parser.variables.variables.get("b"), 89);
+            assertEquals(Parser.variables.variables.get("c"), 144);
+        });
     }
+
 }
