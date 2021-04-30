@@ -5,7 +5,7 @@ public class Parser implements ParserConstants {
     public Context variables = new Context();
     public static void main(String[] args) throws Exception {
       Parser parser=new Parser(new StreamProvider(System.in));
-      parser.Parse().execute(parser.variables); 
+      parser.Parse().execute(parser.variables);
     }
 
   final public CodeBlock Parse() throws ParseException {CodeBlock block;
@@ -124,7 +124,6 @@ return ret;
 
   final public BooleanExpression BExp() throws ParseException {ArithmeticExpression op1, op2;
     BooleanExpression boolOp1, boolOp2, ret;
-System.out.println("Parsing boolean expression");
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TRUE:{
       jj_consume_token(TRUE);

@@ -167,7 +167,6 @@ BooleanExpression BExp():
     BooleanExpression boolOp1, boolOp2, ret;
 }
 {
-    {System.out.println("Parsing boolean expression");}
     (
     <TRUE>
     {ret = new ConstantBoolean(true);}

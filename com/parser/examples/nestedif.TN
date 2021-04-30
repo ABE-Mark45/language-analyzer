@@ -1,0 +1,9 @@
+a := 1;
+b := 2;
+if (a == 1) then
+    if (b == 1) then
+        a := (a+1)
+    else
+        b := (b+1)
+    else
+        b := 5
