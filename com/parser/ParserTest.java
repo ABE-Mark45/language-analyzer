@@ -264,8 +264,20 @@ class ParserTest {
         });
     }
 
+    @Test
+    void NegativeNumbersNotAllowed() {
+        assertThrows(Exception.class, () -> {
+            Parser p = new Parser("a := (5 - 6)");
+            p.Parse().execute(p.variables);
+        });
 
-    @org.junit.jupiter.api.Test
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser("a := (6 - 5)");
+            p.Parse().execute(p.variables);
+        });
+    }
+
+    @Test
     void Fibonacci() {
         File file = new File(new File("").getAbsoluteFile() +
                 File.separator + "com" + File.separator + "parser" +
@@ -284,7 +296,7 @@ class ParserTest {
         });
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void NestedIfStatement() {
         File file = new File(new File("").getAbsoluteFile() +
                 File.separator + "com" + File.separator + "parser" +
@@ -298,6 +310,25 @@ class ParserTest {
             System.out.println(p.variables.variables.get("b"));
             assertEquals(p.variables.variables.get("a"), 1);
             assertEquals(p.variables.variables.get("b"), 3);
+        });
+    }
+
+    @Test
+    void nestedWhileLoop() {
+        // Output will be 10 * ( 9 * (9 + 1) / 2 ) = 450
+        assertDoesNotThrow(() -> {
+            Parser p = new Parser("""
+                a := 0;
+                c := 0;
+                while !(a == 10) do
+                    a := (a + 1);
+                    b := 0;
+                    while !(b == 10) do
+                        c := (c + b);
+                        b := (b + 1)
+                """);
+            p.Parse().execute(p.variables);
+            assertEquals(p.variables.variables.get("c"), 450);
         });
     }
 

@@ -145,7 +145,12 @@ class BinaryArithmeticExpression implements ArithmeticExpression {
             case "+":
                 return arithmeticExpressionA.evaluate(context) + arithmeticExpressionB.evaluate(context);
             case "-":
-                return arithmeticExpressionA.evaluate(context) - arithmeticExpressionB.evaluate(context);
+                int opA = arithmeticExpressionA.evaluate(context);
+                int opB = arithmeticExpressionB.evaluate(context);
+
+                if(opA < opB)
+                    throw new Exception("negative numbers are not allowed");
+                return opA - opB;
             default:
                 throw new Exception("Undefined Operator");
         }

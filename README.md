@@ -11,6 +11,9 @@ It follows the interpreter design pattern. Each statement (if, while, assignment
 # `Parser.jj`
 The parser encapsulates the classes defined in the `Interpreter.java` and holds a `Context` which acts as a symbols table for the variables in the program.
 
+# Tests
+We wrote tests which read program from strings and files in the `examples` folder. 
+
 # Note
 We introduced the `block` production to the grammar.
 ```
